@@ -1,0 +1,23 @@
+Package: clams
+Title: Pull and process clam data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Laurel", "Smith", , "laurel.smith@noaa.gov", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Pull clams data and applies coefficients to the new strata definitions
+License: file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports:
+  dbutils,
+  NEFSCSpatial,
+  ggplot2,
+  sf,
+  here,
+  dplyr,
+  survdat
+Remotes:
+  andybeet/dbutils
+  NOAA-EDAB/survdat
+  NEFSC/NEFSCSpatial
