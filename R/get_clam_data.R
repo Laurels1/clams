@@ -1,6 +1,7 @@
 #' Get clam data in 2017+ strata
 #'
-#' New clam strata were defined from 2017. Recent clam assessments are now using
+#' New clam strata were defined starting in 2017 and no tows occur outside of these strata after 2016. 
+#' Recent clam assessments are now using
 #' this set of strata. The data sampled from previous years surveys are now required on this
 #' new footprint. The data are pulled from the survey database and stations/tows that fall within
 #' the boundaries of the new strata are selected (using strata shapefile). All other tows are
@@ -70,5 +71,17 @@ plot(p3)
 
 clippedData <- joinPointsToPolygon
 
+# Calculating meat weights based on clam length (separately for nothern v. southern stocks)
+# length-meat weight coefficients from Dan Hennen on Jan. 2nd, 2023:
+# b = 2.73325 (slope for both stocks)
+# a = 9.44477e-05 (intercept south - this value converts length in cm to weight in kg)
+# a = 0.0001055 (intercept north) 
+# w = aL^b
 
+ClamCoeff <- clippedData %>% dplyr::mutate(b = 2.73325) %>% 
+  dplyr::mutate(a = if_else(Region == 'NORTH', 0.0001055,
+                if_else(Region == 'SOUTH', 9.44477e-05, 'NA')))
 
+ClamMeatWt <- ClamCoeff %>% dplyr::mutate(MeatWtKg = a*LENGTH^b)
+
+saveRDS(ClamMeatWt, file = here::here('data","ClamdatMeatWt.RDS'))
