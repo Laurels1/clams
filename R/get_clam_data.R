@@ -28,7 +28,8 @@ newStrata <-sf::st_read(dsn=here::here("data-raw/gis/SCstrata.shp")) |>
   sf::st_set_crs(sf::st_crs(oldpoly))
 
 # pulls survdat data and remove missing lat and longs
-surv <- survdat::get_survdat_clam_data(channel,assignRegionWeights = F)
+surv <- survdat::get_survdat_clam_data(channel)
+                                       #,assignRegionWeights = F)
 surv <- surv$data |>
   dplyr::filter(!(is.na(LAT) | is.na(LON) ))
 
@@ -80,7 +81,7 @@ clippedData <- joinPointsToPolygon
 
 ClamCoeff <- clippedData %>% dplyr::mutate(b = 2.73325) %>% 
   dplyr::mutate(a = if_else(Region == 'NORTH', 0.0001055,
-                if_else(Region == 'SOUTH', 9.44477e-05, 'NA')))
+                if_else(Region == 'SOUTH', 9.44477e-05, 0)))
 
 ClamMeatWt <- ClamCoeff %>% dplyr::mutate(MeatWtKg = a*LENGTH^b)
 
