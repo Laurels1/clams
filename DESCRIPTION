@@ -21,3 +21,4 @@ Remotes:
   andybeet/dbutils
   NOAA-EDAB/survdat
   NEFSC/NEFSCSpatial
+remotes::install_github("NEFSC/NEFSC-Spatial")
