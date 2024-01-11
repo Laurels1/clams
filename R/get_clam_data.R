@@ -11,7 +11,8 @@
 
 # connect to db however you normally do.
 # if you can install dbutils then this is the best option to connect
-channel <- dbutils::connect_to_database("sole","user")
+#channel <- dbutils::connect_to_database("sole","user")
+source(("C:\\Users\\laurel.smith\\Documents\\EDAB\\ConditionGAM\\R\\ConnectOracle.R"))
 
 
 #read in stratum/Region pairs
@@ -28,13 +29,15 @@ newStrata <-sf::st_read(dsn=here::here("data-raw/gis/SCstrata.shp")) |>
   sf::st_set_crs(sf::st_crs(oldpoly))
 
 # pulls survdat data and remove missing lat and longs
-surv <- survdat::get_survdat_clam_data(channel)
-                                       #,assignRegionWeights = F)
+surv <- survdat::get_survdat_clam_data(channel, assignRegionWeights = F)
 surv <- surv$data |>
   dplyr::filter(!(is.na(LAT) | is.na(LON) ))
 
 # converts survdat data to sf object so we can clip the data to strata
 survdat_points <- sf::st_as_sf(surv,coords=c("LON","LAT"),crs=sf::st_crs(oldpoly))
+
+#if meat weight isn't needed, can use all data not clipped to new strata:
+saveRDS(survdat_points, file = here::here('output','Clamdata_OldNewStrata.RDS'))
 
 ### plot to see how the data relate to the strata
 p1 <- ggplot2::ggplot() +
@@ -85,4 +88,4 @@ ClamCoeff <- clippedData %>% dplyr::mutate(b = 2.73325) %>%
 
 ClamMeatWt <- ClamCoeff %>% dplyr::mutate(MeatWtKg = a*LENGTH^b)
 
-saveRDS(ClamMeatWt, file = here::here('data","ClamdatMeatWt.RDS'))
+saveRDS(ClamMeatWt, file = here::here('output','ClamdatMeatWt.RDS'))
